@@ -1,6 +1,7 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const path = require("path");
 
 // Tambahkan penanganan error global
 process.on("uncaughtException", (err) => {
@@ -18,6 +19,9 @@ const port = process.env.PORT || 3001;
 const rateLimiter = require("./middleware/rateLimiter");
 
 app.use(rateLimiter);
+
+// Middleware untuk menyajikan file statis (HTML, CSS, JS frontend)
+app.use(express.static(path.join(__dirname, "frontend")));
 
 // Middleware for CORS
 app.use((req, res, next) => {
@@ -65,10 +69,15 @@ const genreAll = require("./routes/genre-all");
 const genreDetail = require("./routes/genre-detail");
 const genreRekomendasi = require("./routes/genre-rekomendasi");
 
-// Root route
+// Root route: Sekarang langsung menampilkan halaman utama frontend (index.html)
 app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+// Endpoint informasi API JSON dipindah ke jalur /api-info agar tidak menimpa frontend
+app.get("/api-info", (req, res) => {
   res.json({
-    message: "Welcome to Komiku Rest API",
+    message: "Welcome to Koniku Rest API",
     version: "1.0.0",
     endpoints: [
       "/rekomendasi",
