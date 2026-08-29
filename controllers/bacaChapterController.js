@@ -4,7 +4,6 @@ const {
   fetchHtml,
   getAbsoluteUrl,
   normalizeText,
-  getImageUrl,
   extractMangaSlug,
   extractChapterNumber,
   extractChapterSlug,
@@ -78,18 +77,19 @@ const getBacaChapter = async (req, res) => {
     });
 
     const images = [];
-    $("#Baca_Komik img, img.ww, img[id]").each((_, el) => {
+    // Diperluas selektornya untuk menangkap seluruh gambar di area baca komik
+    $("#Baca_Komik img, img.ww, img[id], .pembaca img, article img").each((_, el) => {
       const img = $(el);
       
-      // Tangkap src standar atau atribut lazy load (data-src / data-original) agar gambar awal tidak terlewat
-      const rawSrc = img.attr("data-src") || img.attr("data-original") || img.attr("src");
-      const tempImg = { attr: (name) => name === 'src' ? rawSrc : img.attr(name) };
-      const src = getImageUrl($, tempImg);
+      // Ambil link dari atribut lazy load atau src biasa
+      const rawSrc = img.attr("data-src") || img.attr("data-original") || img.attr("src") || img.attr("data-lazy-src");
+      if (!rawSrc) return;
+
+      const src = getAbsoluteUrl(rawSrc);
       const id = normalizeText(img.attr("id"));
 
       if (
         src &&
-        // Diperluas dengan (?:\/upload|\/uploads) agar mencakup seluruh folder penyimpanan server
         /(?:img|cdn|komiku)\.komiku\.org\/(?:upload|uploads)/i.test(src) &&
         (!id || /^\d+$/.test(id))
       ) {
@@ -160,7 +160,7 @@ const getBacaChapter = async (req, res) => {
         target: chapterUrl,
         titleFound: !!title,
         imagesFound: uniqueImages.length,
-        selectors: "#Judul h1, #Baca_Komik img, img.ww",
+        selectors: "#Baca_Komik img, img.ww, .pembaca img",
       });
 
       return res.status(502).json({
