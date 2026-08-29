@@ -3,195 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KOMIK KITA — Baca Komik Premium</title>
-<meta name="description" content="Baca ribuan komik terbaru setiap hari — koleksi premium, update cepat, pengalaman membaca terbaik.">
+<title>KOMIK KITA — Elite 3D Platform</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0b0e;
-  --bg-2:#101015;
-  --surface:#16161c;
+  --bg:#060913;
+  --bg-2:#0b0f19;
+  --surface:rgba(18, 24, 38, 0.85);
+  --surface-hover:rgba(26, 35, 53, 0.95);
   --line:rgba(255,255,255,.09);
   --line-soft:rgba(255,255,255,.05);
-  --gold:#c9a227;
-  --gold-soft:#e3c766;
-  --gold-ink:#1a1505;
-  --text:#ece9e2;
-  --muted:#8f8b80;
+  --accent-cyan:#00f0ff;
+  --accent-purple:#7000ff;
+  --accent-glow:rgba(0, 240, 255, 0.3);
+  --text:#f3f4f6;
+  --muted:#9ca3af;
   --serif:'Fraunces',Georgia,serif;
   --sans:'Manrope',system-ui,sans-serif;
+  --shadow-3d: 0 12px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  --shadow-3d-hover: 0 20px 40px -10px rgba(0, 240, 255, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);color:var(--text);font-family:var(--sans);
-  -webkit-font-smoothing:antialiased;min-height:100vh;
+  -webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;
+  background-image: radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.05) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 40%);
 }
-::selection{background:var(--gold);color:var(--gold-ink)}
-::-webkit-scrollbar{width:10px;height:10px}
+::selection{background:var(--accent-cyan);color:#060913}
+::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:#2a2a32;border:3px solid var(--bg)}
-::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+::-webkit-scrollbar-thumb{background:rgba(0, 240, 255, 0.3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent-cyan)}
 img{display:block}
 button{font-family:inherit;cursor:pointer}
 
 /* ============ NAVBAR ============ */
 .navbar{
   position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(11,11,14,.82);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line-soft);
+  background:rgba(6, 9, 19, 0.85);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
-.nav-inner{max-width:1320px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:20px}
-.brand{display:flex;align-items:baseline;gap:10px;cursor:pointer;text-decoration:none;flex-shrink:0}
+.nav-inner{max-width:1300px;margin:0 auto;padding:0 24px;height:70px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;flex-shrink:0}
 .brand .word{font-family:var(--serif);font-weight:800;font-size:22px;letter-spacing:.5px;color:var(--text)}
-.brand .word em{font-style:italic;color:var(--gold)}
-.brand .dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);align-self:center}
-.nav-menu{display:flex;gap:4px;flex:1}
-.nav-btn{
-  background:none;border:none;color:var(--muted);font-size:12.5px;font-weight:600;
-  letter-spacing:1.6px;text-transform:uppercase;padding:10px 14px;position:relative;transition:color .25s;
+.brand .word em{font-style:italic;color:var(--accent-cyan)}
+.brand .dot{width:6px;height:6px;background:var(--accent-cyan);transform:rotate(45deg);align-self:center;box-shadow:0 0 8px var(--accent-cyan)}
+
+.dev-tag{
+  font-family:monospace;font-size:0.7rem;color:var(--accent-cyan);
+  background:rgba(0, 240, 255, 0.05);border:1px dashed rgba(0, 240, 255, 0.25);
+  padding:2px 6px;border-radius:4px;margin-left:6px;display:none;
 }
-.nav-btn::after{content:'';position:absolute;left:14px;right:14px;bottom:2px;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s}
-.nav-btn:hover{color:var(--text)}
-.nav-btn.active{color:var(--gold-soft)}
-.nav-btn.active::after{transform:scaleX(1)}
-.search-wrap{display:flex;align-items:center;border:1px solid var(--line);background:var(--surface);transition:border-color .3s}
+@media(min-width:1024px){.dev-tag{display:inline-block}}
+
+.nav-menu{display:flex;gap:6px;flex:1;list-style:none}
+.nav-btn{
+  background:transparent;border:none;color:var(--muted);font-size:12px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px;border-radius:8px;
+  position:relative;transition:all .25s ease;
+}
+.nav-btn:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.nav-btn.active{color:var(--accent-cyan);background:rgba(0, 240, 255, 0.08);border:1px solid rgba(0, 240, 255, 0.2)}
+
+.search-wrap{display:flex;align-items:center;border:1px solid var(--line);background:rgba(18,24,38,0.6);border-radius:10px;transition:border-color .3s}
 .menu-search{display:none}
-.search-wrap:focus-within{border-color:var(--gold)}
-.search-wrap input{background:none;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:13.5px;padding:9px 14px;width:180px}
+.search-wrap:focus-within{border-color:var(--accent-cyan);box-shadow:0 0 12px var(--accent-glow)}
+.search-wrap input{background:none;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:13px;padding:8px 12px;width:200px}
 .search-wrap input::placeholder{color:var(--muted)}
-.search-wrap button{background:none;border:none;color:var(--muted);padding:0 14px;font-size:14px;transition:color .25s}
-.search-wrap button:hover{color:var(--gold)}
-.hamburger{display:none;background:rgba(201,162,39,.16);border:1px solid var(--gold);width:44px;height:44px;flex-shrink:0;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:0}
-.hamburger span{display:block;width:22px;height:2px;background:var(--gold-soft);box-shadow:0 0 0 1px rgba(227,199,102,.08)}
+.search-wrap button{background:none;border:none;color:var(--muted);padding:0 12px;font-size:13px;transition:color .25s}
+.search-wrap button:hover{color:var(--accent-cyan)}
+
+.hamburger{display:none;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.3);width:40px;height:40px;border-radius:8px;flex-shrink:0;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:0}
+.hamburger span{display:block;width:20px;height:2px;background:var(--accent-cyan)}
 .hamburger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .hamburger[aria-expanded="true"] span:nth-child(2){opacity:0}
 .hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .hamburger span{transition:transform .2s,opacity .2s}
 
 /* ============ LAYOUT ============ */
-.container{max-width:1320px;margin:0 auto;padding:96px 24px 60px}
-.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:52px 0 24px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
-.section-head h2{font-family:var(--serif);font-size:clamp(24px,3vw,34px);font-weight:600;letter-spacing:.3px}
-.section-head h2 em{font-style:italic;color:var(--gold)}
-.section-head .count{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.container{max-width:1300px;margin:0 auto;padding:96px 24px 60px;flex:1;width:100%}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:42px 0 20px;padding-left:12px;border-left:4px solid var(--accent-cyan)}
+.section-head h2{font-family:var(--serif);font-size:clamp(22px,2.5vw,30px);font-weight:600;letter-spacing:.3px}
+.section-head h2 em{font-style:italic;color:var(--accent-cyan)}
+.section-head .count{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 
 /* ============ HERO ============ */
-.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:end;padding:24px 0 12px;min-height:340px}
-.hero .eyebrow{font-size:11.5px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:12px}
-.hero .eyebrow::before{content:'';width:34px;height:1px;background:var(--gold)}
-.hero h1{font-family:var(--serif);font-size:clamp(38px,5.4vw,64px);font-weight:500;line-height:1.06;letter-spacing:-.5px}
-.hero h1 em{font-style:italic;color:var(--gold-soft)}
-.hero p{margin-top:20px;color:var(--muted);font-size:15.5px;line-height:1.75;max-width:520px}
-.hero-cta{display:flex;gap:14px;margin-top:32px}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 26px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid transparent;transition:all .3s}
-.btn-gold{background:var(--gold);color:var(--gold-ink)}
-.btn-gold:hover{background:var(--gold-soft)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--line)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
-.hero-side{border-left:1px solid var(--line-soft);padding-left:36px}
-.hero-stats{display:flex;flex-direction:column;gap:22px}
-.stat .num{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--gold-soft)}
-.stat .lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:end;padding:20px 0 10px;min-height:300px}
+.hero .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero .eyebrow::before{content:'';width:28px;height:1px;background:var(--accent-cyan)}
+.hero h1{font-family:var(--serif);font-size:clamp(34px,4.5vw,56px);font-weight:500;line-height:1.1;letter-spacing:-.5px}
+.hero h1 em{font-style:italic;color:var(--accent-cyan)}
+.hero p{margin-top:16px;color:var(--muted);font-size:15px;line-height:1.7;max-width:500px}
+.hero-cta{display:flex;gap:12px;margin-top:28px}
 
-/* ============ CARDS ============ */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:22px 18px}
-.card{cursor:pointer;position:relative;background:transparent;transition:transform .35s cubic-bezier(.22,1,.36,1)}
-.card:hover{transform:translateY(-6px)}
-.thumb{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--surface);border:1px solid var(--line-soft)}
-.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.22,1,.36,1),filter .4s}
-.card:hover .thumb img{transform:scale(1.06)}
-.thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(11,11,14,.85));opacity:0;transition:opacity .35s}
-.card:hover .thumb::after{opacity:1}
-.rank{position:absolute;top:10px;left:10px;z-index:2;font-family:var(--serif);font-style:italic;font-size:13px;background:var(--gold);color:var(--gold-ink);padding:3px 10px;font-weight:700}
-.chip{position:absolute;top:10px;right:10px;z-index:2;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;background:rgba(11,11,14,.8);backdrop-filter:blur(6px);color:var(--gold-soft);border:1px solid rgba(201,162,39,.4);padding:4px 9px}
-.card-meta{padding:12px 2px 0}
-.card-meta h3{font-size:14px;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .25s}
-.card:hover .card-meta h3{color:var(--gold-soft)}
-.card-meta .sub{margin-top:5px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.card-meta .sub i{color:var(--gold);font-size:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:10px;transition:all .3s}
+.btn-cyan{background:linear-gradient(135deg, var(--accent-purple), #4f46e5);color:#fff;box-shadow:0 4px 15px rgba(112,0,255,0.4)}
+.btn-cyan:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(112,0,255,0.6)}
+.btn-ghost{background:rgba(25,33,50,0.8);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow-3d)}
+.btn-ghost:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#991b1b);color:#fff}
+
+.hero-side{border-left:1px solid var(--line);padding-left:32px}
+.hero-stats{display:flex;flex-direction:column;gap:20px}
+.stat .num{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--accent-cyan)}
+.stat .lbl{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* ============ HORIZONTAL SCROLL (GESER KANAN KIRI) ============ */
+.horizontal-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 4px 20px 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-cyan) rgba(25, 30, 45, 0.5);
+}
+.horizontal-scroll::-webkit-scrollbar { height: 6px; }
+.horizontal-scroll::-webkit-scrollbar-track { background: rgba(18, 24, 38, 0.5); border-radius: 10px; }
+.horizontal-scroll::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+.horizontal-scroll .card { flex: 0 0 170px; scroll-snap-align: start; }
+@media (min-width: 768px) { .horizontal-scroll .card { flex: 0 0 195px; } }
+
+/* ============ CARDS (3D) ============ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px 16px}
+.card{
+  cursor:pointer;position:relative;background:var(--surface);border-radius:14px;overflow:hidden;
+  border:1px solid var(--line);box-shadow:var(--shadow-3d);display:flex;flex-direction:column;
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+}
+.card:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(0,240,255,0.4);box-shadow:var(--shadow-3d-hover);background:var(--surface-hover)}
+.thumb{position:relative;aspect-ratio:3/4;overflow:hidden;background:#0f1523}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.card:hover .thumb img{transform:scale(1.07)}
+.chip{
+  position:absolute;top:8px;right:8px;z-index:2;font-size:9.5px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;background:rgba(6,9,19,0.85);backdrop-filter:blur(6px);
+  color:var(--accent-cyan);border:1px solid rgba(0,240,255,0.3);padding:3px 8px;border-radius:6px;
+}
+.card-meta{padding:12px;display:flex;flex-direction:column;flex-grow:1;justify-content:space-between}
+.card-meta h3{font-size:13.5px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .25s}
+.card:hover .card-meta h3{color:var(--accent-cyan)}
+.card-meta .sub{margin-top:6px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.card-meta .sub i{color:var(--accent-cyan);font-size:10px}
 
 /* ============ GENRE ============ */
-.genre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-.genre-tile{position:relative;padding:26px 22px;border:1px solid var(--line-soft);background:var(--bg-2);cursor:pointer;overflow:hidden;transition:border-color .3s}
-.genre-tile::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transition:transform .35s;transform-origin:bottom}
-.genre-tile:hover{border-color:rgba(201,162,39,.45)}
+.genre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.genre-tile{
+  position:relative;padding:22px 20px;border:1px solid var(--line);background:var(--surface);
+  cursor:pointer;overflow:hidden;border-radius:12px;transition:all .3s;box-shadow:var(--shadow-3d);
+}
+.genre-tile::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent-cyan);transform:scaleY(0);transition:transform .35s;transform-origin:bottom}
+.genre-tile:hover{border-color:rgba(0,240,255,0.4);transform:translateY(-3px)}
 .genre-tile:hover::before{transform:scaleY(1)}
-.genre-tile .gname{font-family:var(--serif);font-size:20px;font-weight:600}
-.genre-tile .gcount{margin-top:6px;font-size:11.5px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
-.genre-tile i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;transition:all .3s}
-.genre-tile:hover i{color:var(--gold);right:14px}
+.genre-tile .gname{font-family:var(--serif);font-size:18px;font-weight:600}
+.genre-tile i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;transition:all .3s}
+.genre-tile:hover i{color:var(--accent-cyan);right:14px}
 
 /* ============ HISTORY LIST ============ */
-.list{display:flex;flex-direction:column;border-top:1px solid var(--line-soft)}
-.row{display:grid;grid-template-columns:64px 1fr auto;gap:18px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s,padding-left .25s}
-.row:hover{background:rgba(201,162,39,.04);padding-left:12px}
-.row img{width:64px;height:84px;object-fit:cover;border:1px solid var(--line-soft)}
-.row .rtitle{font-size:15px;font-weight:700}
-.row .rsub{margin-top:5px;font-size:12px;color:var(--muted)}
-.row .go{color:var(--muted);font-size:14px}
-.row:hover .go{color:var(--gold)}
+.list{display:flex;flex-direction:column;gap:12px}
+.row{
+  display:grid;grid-template-columns:65px 1fr auto;gap:16px;align-items:center;padding:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;cursor:pointer;
+  box-shadow:var(--shadow-3d);transition:all .25s;
+}
+.row:hover{border-color:var(--accent-cyan);transform:translateX(4px)}
+.row img{width:65px;height:85px;object-fit:cover;border-radius:8px}
+.row .rtitle{font-size:14.5px;font-weight:700}
+.row .rsub{margin-top:4px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.row .go{color:var(--muted);font-size:13px}
+.row:hover .go{color:var(--accent-cyan)}
 
 /* ============ DETAIL ============ */
-.detail{display:grid;grid-template-columns:280px 1fr;gap:44px}
-.detail-cover{position:relative}
-.detail-cover img{width:100%;border:1px solid var(--line)}
-.detail-cover::after{content:'';position:absolute;inset:0;transform:translate(12px,12px);border:1px solid var(--gold);z-index:-1;opacity:.5}
-.detail h1{font-family:var(--serif);font-size:clamp(26px,3.4vw,40px);font-weight:600;line-height:1.15}
-.badges{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-.badge{font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;border:1px solid var(--line);color:var(--muted);padding:6px 12px}
-.badge.gold{border-color:rgba(201,162,39,.5);color:var(--gold-soft)}
-.detail .desc{color:var(--muted);font-size:14.5px;line-height:1.8;max-width:640px}
-.chapters{margin-top:36px}
-.chapters h3{font-family:var(--serif);font-size:22px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line-soft)}
-.ch-item{display:flex;justify-content:space-between;align-items:center;padding:13px 6px;border-bottom:1px solid var(--line-soft);font-size:14px;cursor:pointer;transition:all .25s}
-.ch-item:hover{color:var(--gold-soft);padding-left:12px}
-.ch-item .num{color:var(--muted);font-size:12px;letter-spacing:1px}
-.back-link{background:none;border:none;color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:26px;display:inline-flex;gap:10px;align-items:center;transition:color .25s}
-.back-link:hover{color:var(--gold)}
+.detail{display:grid;grid-template-columns:260px 1fr;gap:36px}
+.detail-cover{position:relative;align-self:start}
+.detail-cover img{width:100%;border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 25px rgba(0,0,0,0.6)}
+.detail h1{font-family:var(--serif);font-size:clamp(24px,3.2vw,36px);font-weight:600;line-height:1.2}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.badge{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--line);color:var(--muted);padding:5px 10px;border-radius:6px;background:rgba(255,255,255,.02)}
+.badge.gold{border-color:rgba(0,240,255,0.4);color:var(--accent-cyan);background:rgba(0,240,255,0.05)}
+.detail .desc{color:var(--muted);font-size:14px;line-height:1.75;max-width:650px;margin-top:10px}
+
+/* Bookmark Button 3D Style */
+.btn-bookmark {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--accent-cyan);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 12px 0 6px 0;
+}
+.btn-bookmark:hover { background: rgba(0, 240, 255, 0.2); transform: translateY(-1px); }
+.btn-bookmark.saved { background: var(--accent-cyan); color: #060913; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-glow); }
+
+.chapters{margin-top:32px}
+.chapters h3{font-family:var(--serif);font-size:20px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-height:380px;overflow-y:auto;padding-right:4px}
+.ch-item{
+  background:rgba(25,33,50,0.6);border:1px solid var(--line);color:var(--text);padding:10px;
+  border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;text-align:center;font-weight:500;
+}
+.ch-item:hover{background:var(--accent-cyan);color:#060913;border-color:var(--accent-cyan);box-shadow:0 0 10px var(--accent-glow)}
+.back-link{background:none;border:none;color:var(--muted);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;display:inline-flex;gap:8px;align-items:center;transition:color .25s;cursor:pointer}
+.back-link:hover{color:var(--accent-cyan)}
 
 /* ============ READER ============ */
 .reader{max-width:820px;margin:0 auto}
-.reader-head{text-align:center;margin-bottom:28px}
-.reader-head h2{font-family:var(--serif);font-size:26px;font-weight:600}
-.reader-head p{color:var(--muted);font-size:12.5px;letter-spacing:2px;text-transform:uppercase;margin-top:8px}
-.reader img{width:100%;margin-bottom:2px;background:var(--surface)}
-.reader-nav{display:flex;justify-content:space-between;gap:12px;margin:32px 0}
+.reader-head{text-align:center;margin-bottom:24px}
+.reader-head h2{font-family:var(--serif);font-size:24px;font-weight:600}
+.reader-head p{color:var(--muted);font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.reader img{width:100%;margin-bottom:-1px;background:#000}
+.reader-nav{display:flex;justify-content:space-between;gap:12px;margin:28px 0;background:var(--surface);padding:12px;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-3d)}
 
-/* ============ STATES ============ */
-.loading,.empty{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
-.loader-mark{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--gold);animation:pulse 1.4s ease-in-out infinite}
+/* ============ STATES & EXTRAS ============ */
+.loading,.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
+.loader-mark{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--accent-cyan);animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
-.empty i{font-size:34px;color:var(--gold);opacity:.6;margin-bottom:16px}
-.empty p{font-size:14px}
+.empty i{font-size:32px;color:var(--accent-cyan);opacity:.6;margin-bottom:14px}
+.empty p{font-size:13.5px}
 
-/* ============ FOOTER ============ */
-footer{border-top:1px solid var(--line-soft);margin-top:80px;padding:40px 24px;text-align:center}
-footer .fword{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--gold)}
-footer p{color:var(--muted);font-size:12px;margin-top:10px;letter-spacing:1px}
+#scrollTopBtn{
+  position:fixed;bottom:25px;right:25px;background:var(--accent-cyan);color:#060913;border:none;
+  width:44px;height:44px;border-radius:50%;cursor:pointer;display:none;align-items:center;
+  justify-content:center;box-shadow:0 5px 20px rgba(0,240,255,0.5);z-index:99;font-weight:bold;transition:0.3s;
+}
+#scrollTopBtn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,240,255,0.8)}
+
+footer{border-top:1px solid var(--line);margin-top:70px;padding:36px 24px;text-align:center;background:rgba(6,9,19,0.9)}
+footer .fword{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--accent-cyan)}
+footer p{color:var(--muted);font-size:11.5px;margin-top:8px;letter-spacing:1px}
 
 @media(max-width:900px){
-  .hero{grid-template-columns:1fr;gap:30px}
-  .hero-side{border-left:none;padding-left:0;border-top:1px solid var(--line-soft);padding-top:24px}
-  .hero-stats{flex-direction:row;gap:36px}
+  .hero{grid-template-columns:1fr;gap:24px}
+  .hero-side{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:20px}
+  .hero-stats{flex-direction:row;gap:30px}
   .detail{grid-template-columns:1fr}
-  .detail-cover{max-width:240px}
-  .nav-menu{display:none;position:fixed;top:68px;left:0;right:0;background:var(--bg-2);border-bottom:1px solid var(--line);flex-direction:column;padding:12px 24px 20px;z-index:99}
+  .detail-cover{max-width:220px;margin:0 auto}
+  .nav-menu{display:none;position:fixed;top:70px;left:0;right:0;background:var(--bg-2);border-bottom:1px solid var(--line);flex-direction:column;padding:12px 20px 20px;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,0.8)}
   .nav-menu.open{display:flex}
-  .nav-btn{text-align:left;font-size:14px;padding:14px 10px;border-bottom:1px solid var(--line-soft)}
+  .nav-btn{text-align:left;font-size:13px;padding:12px 10px;border-bottom:1px solid var(--line-soft)}
   .hamburger{display:inline-flex;margin-left:auto}
   .nav-search{display:none}
-  .menu-search{display:flex;margin:4px 0 10px}
+  .menu-search{display:flex;margin:4px 0 8px}
   .menu-search input{flex:1;width:auto}
 }
 @media(max-width:560px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px 12px}
-  .container{padding:88px 16px 60px}
-  .nav-inner{padding:0 16px;gap:12px}
-  .hero h1{font-size:34px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px 12px}
+  .container{padding:84px 16px 50px}
+  .nav-inner{padding:0 16px}
+  .hero h1{font-size:30px}
 }
 </style>
 </head>
@@ -202,6 +273,7 @@ footer p{color:var(--muted);font-size:12px;margin-top:10px;letter-spacing:1px}
     <a class="brand" onclick="loadView('home')">
       <span class="word">KOMIK <em>Kita</em></span>
       <span class="dot"></span>
+      <span class="dev-tag">v3.0 // 3D PROD</span>
     </a>
     <div class="nav-menu" id="navMenu">
       <div class="search-wrap menu-search">
@@ -227,46 +299,74 @@ footer p{color:var(--muted);font-size:12px;margin-top:10px;letter-spacing:1px}
 
 <main class="container" id="app"></main>
 
+<button id="scrollTopBtn" onclick="scrollToTop()"><i class="fa-solid fa-arrow-up"></i></button>
+
 <footer>
   <div class="fword">Komik Kita</div>
-  <p>© 2026 KOMIK KITA — BACA KOMIK TANPA BATAS</p>
+  <p>© 2026 KOMIK KITA — 3D ELITE ARCHITECTURE</p>
 </footer>
 
 <script>
 /* ============================================================
-   KONFIGURASI API — sesuaikan dengan backend kamu
+   API BASE URL (Kosongkan agar terhubung langsung ke Express)
    ============================================================ */
-const API_BASE = 'https://backend-komik.rayhanwlndr9.workers.dev';
+const API_BASE = '';
 
 const ENDPOINTS = {
   rekomendasi: `${API_BASE}/rekomendasi`,
   terbaru:     `${API_BASE}/terbaru`,
-  populer:     `${API_BASE}/populer`,
+  populer:     `${API_BASE}/komik-populer`,
   pustaka:     `${API_BASE}/pustaka`,
-  genre:       `${API_BASE}/genre`,
-  detail:      (slug) => `${API_BASE}/detail/${slug}`,
-  chapter:     (slug) => `${API_BASE}/chapter/${slug}`,
-  search:      (q)    => `${API_BASE}/search/${encodeURIComponent(q)}`,
+  genre:       `${API_BASE}/genre-all`,
+  detail:      (slug) => `${API_BASE}/detail-komik/${slug}`,
+  chapter:     (slug, ch) => `${API_BASE}/baca-chapter/${slug}/${ch}`,
+  search:      (q)    => `${API_BASE}/search?q=${encodeURIComponent(q)}`,
+  genreDetail: (slug) => `${API_BASE}/genre/${slug}`
 };
-
-/* ============================================================ */
 
 const app = document.getElementById('app');
 const HISTORY_KEY = 'komikkita_history';
+const BOOKMARK_KEY = 'komik_pustaka';
+
+let cachedChapters = [];
+let currentComicTitle = '';
+let currentComicThumb = '';
+let currentComicData = null;
 
 function toggleMobileMenu(button){
   const menu = document.getElementById('navMenu');
   const isOpen = menu.classList.toggle('open');
   button.setAttribute('aria-expanded', String(isOpen));
-  button.setAttribute('aria-label', isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi');
 }
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.onscroll = function() {
+    const topBtn = document.getElementById('scrollTopBtn');
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        topBtn.style.display = 'flex';
+    } else {
+        topBtn.style.display = 'none';
+    }
+};
+
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function getSlug(item){return item.slug||item.link||item.url||''}
-function getCover(item){return item.cover||item.image||item.thumb||item.thumbnail||''}
-function getTitle(item){return item.title||item.name||'Tanpa Judul'}
-function getChapter(item){return item.chapter||item.latest_chapter||item.ch||''}
-function getType(item){return item.type||item.jenis||''}
+
+function extractSlug(url) {
+    if (!url) return '';
+    const parts = url.replace(/^\/+|\/+$/g, '').split('/');
+    return parts[parts.length - 1];
+}
+
+function getSlug(item){
+    return item.mangaSlug || item.slug || extractSlug(item.apiDetailLink || item.href || item.detailUrl || item.url || '');
+}
+function getCover(item){return item.thumbnail || item.thumb || item.cover || item.image || 'https://via.placeholder.com/200x280?text=No+Cover'}
+function getTitle(item){return item.title || item.name || 'Tanpa Judul'}
+function getChapter(item){return item.latestChapterTitle || item.latestChapter || item.chapter || item.ch || ''}
+function getType(item){return (item.type || item.jenis || '').toLowerCase()}
 
 async function fetchJSON(url){
   const res = await fetch(url);
@@ -282,69 +382,118 @@ function normalizeList(data){
   return [];
 }
 
-function addHistory(item){
+/* ============ PUSTAKA / BOOKMARK SYSTEM ============ */
+function getBookmarkList() {
+    return JSON.parse(localStorage.getItem(BOOKMARK_KEY)) || [];
+}
+
+function isBookmarked(slug) {
+    return getBookmarkList().some(item => item.slug === slug);
+}
+
+function toggleBookmark(komik) {
+    let list = getBookmarkList();
+    const index = list.findIndex(item => item.slug === komik.slug);
+    const btn = document.getElementById('bookmarkBtn');
+    
+    if (index > -1) {
+        list.splice(index, 1);
+        if(btn) {
+            btn.classList.remove('saved');
+            btn.innerHTML = `<i class="fa-regular fa-bookmark"></i> Simpan Pustaka`;
+        }
+    } else {
+        list.push({
+            slug: komik.slug,
+            title: komik.title,
+            thumb: komik.thumb,
+            type: komik.type || 'manga'
+        });
+        if(btn) {
+            btn.classList.add('saved');
+            btn.innerHTML = `<i class="fa-solid fa-bookmark"></i> Tersimpan di Pustaka`;
+        }
+    }
+    localStorage.setItem(BOOKMARK_KEY, JSON.stringify(list));
+}
+
+/* ============ HISTORY SYSTEM ============ */
+function addHistory(slug, title, thumb, chapterSlug, chapterTitle){
   try{
-    const slug = getSlug(item); if(!slug) return;
+    if(!slug) return;
     let h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
-    h = h.filter(x=>getSlug(x)!==slug);
-    h.unshift({slug:getSlug(item),title:getTitle(item),cover:getCover(item),chapter:getChapter(item),type:getType(item),ts:Date.now()});
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0,60)));
+    h = h.filter(x=>x.slug !== slug);
+    h.unshift({
+        slug, title, thumb, chapterSlug, chapterTitle,
+        time: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0,30)));
   }catch(e){}
 }
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]')}catch(e){return[]}}
 
-function loadingHTML(msg='Memuat koleksi'){return `<div class="loading"><div class="loader-mark">${msg}…</div></div>`}
+function clearHistory() {
+    if (confirm('Yakin ingin membersihkan seluruh riwayat baca?')) {
+        localStorage.removeItem(HISTORY_KEY);
+        loadView('riwayat');
+    }
+}
+
+function loadingHTML(msg='Memuat data'){return `<div class="loading"><div class="loader-mark">${msg}…</div></div>`}
 function emptyHTML(icon,msg){return `<div class="empty"><i class="${icon}"></i><p>${msg}</p></div>`}
-function errorHTML(){return emptyHTML('fa-solid fa-triangle-exclamation','Gagal memuat data. Periksa koneksi atau coba lagi nanti.')}
+function errorHTML(){return emptyHTML('fa-solid fa-triangle-exclamation','Gagal memuat data dari server. Periksa koneksi atau rute endpoint.')}
 
 function sectionHead(title,em,count){
   return `<div class="section-head"><h2>${esc(title)} ${em?`<em>${esc(em)}</em>`:''}</h2>${count!=null?`<span class="count">${count} judul</span>`:''}</div>`;
 }
 
-function cardHTML(item,i,rank=false){
+function cardHTML(item){
   const slug = getSlug(item);
-  return `<article class="card" onclick="openDetail('${esc(slug)}')">
+  const type = getType(item);
+  const title = getTitle(item);
+  const thumb = getCover(item);
+  const chapter = getChapter(item);
+
+  return `<article class="card" onclick="loadView('detail','${esc(slug)}')">
     <div class="thumb">
-      ${rank?`<span class="rank">#${i+1}</span>`:''}
-      ${getType(item)?`<span class="chip">${esc(getType(item))}</span>`:''}
-      <img src="${esc(getCover(item))}" alt="${esc(getTitle(item))}" loading="lazy" onerror="this.style.opacity=.15">
+      ${type?`<span class="chip">${esc(type.toUpperCase())}</span>`:''}
+      <img src="${esc(thumb)}" alt="${esc(title)}" loading="lazy" onerror="this.style.opacity=.15">
     </div>
     <div class="card-meta">
-      <h3>${esc(getTitle(item))}</h3>
-      <div class="sub">${getChapter(item)?`<i class="fa-solid fa-book-open"></i> Ch. ${esc(getChapter(item))}`:''}</div>
+      <h3>${esc(title)}</h3>
+      <div class="sub">${chapter?`<i class="fa-solid fa-bolt"></i> Ch. ${esc(chapter)}`:''}</div>
     </div>
   </article>`;
 }
 
-function gridHTML(items,rank=false){
+function gridHTML(items){
   if(!items.length) return emptyHTML('fa-regular fa-folder-open','Belum ada komik untuk ditampilkan.');
-  return `<div class="grid">${items.map((it,i)=>cardHTML(it,i,rank)).join('')}</div>`;
+  return `<div class="grid">${items.map(it => cardHTML(it)).join('')}</div>`;
 }
 
-/* ============ VIEWS ============ */
+/* ============ VIEWS CONTROLLER ============ */
 
 async function loadView(view,param){
   document.getElementById('navMenu').classList.remove('open');
-  window.scrollTo({top:0});
-  const base = view.split('/')[0];
-  setActiveNav(base);
+  scrollToTop();
+  setActiveNav(view);
 
   if(view==='home') return viewHome();
-  if(view==='populer') return viewList('populer','Paling','Populer',ENDPOINTS.populer,true);
-  if(view==='terbaru') return viewList('terbaru','Rilisan','Terbaru',ENDPOINTS.terbaru);
-  if(view==='pustaka') return viewList('pustaka','Pustaka','Lengkap',ENDPOINTS.pustaka);
-  if(view==='genre'&&param) return viewGenreKomik(param);
+  if(view==='populer') return viewPopuler(param || 'all');
+  if(view==='terbaru') return viewList('Rilisan', 'Terbaru', ENDPOINTS.terbaru);
+  if(view==='pustaka') return viewPustaka();
+  if(view==='genre' && param) return viewGenreDetail(param);
   if(view==='genre') return viewGenre();
   if(view==='riwayat') return viewRiwayat();
-  if(view==='search'&&param) return viewSearch(param);
-  if(view==='detail'&&param) return viewDetail(param);
-  if(view==='read'&&param) return viewReader(param);
+  if(view==='search' && param) return viewSearch(param);
+  if(view==='detail' && param) return viewDetail(param);
+  if(view==='read' && param) return viewReader(param);
   viewHome();
 }
 
 function setActiveNav(view){
   document.querySelectorAll('.nav-menu .nav-btn').forEach(b=>{
-    b.classList.toggle('active', b.textContent.toLowerCase()===({home:'beranda'})[view]||b.getAttribute('onclick')?.includes(`'${view}'`));
+    b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${view}'`));
   });
 }
 
@@ -352,63 +501,90 @@ async function viewHome(){
   app.innerHTML = `
   <section class="hero">
     <div>
-      <div class="eyebrow">Platform Baca Komik</div>
-      <h1>Cerita terbaik,<br>disajikan dengan <em>rasa.</em></h1>
-      <p>Koleksi manga, manhwa, dan manhua pilihan — dikurasi setiap hari, diperbarui secepat rilisan aslinya.</p>
+      <div class="eyebrow">Elite 3D Platform</div>
+      <h1>Cerita terbaik,<br>disajikan dengan <em>estetika.</em></h1>
+      <p>Koleksi manga, manhwa, dan manhua pilihan — dikurasi dengan arsitektur modern dan pembacaan tanpa batas.</p>
       <div class="hero-cta">
-        <button class="btn btn-gold" onclick="loadView('terbaru')">Mulai Membaca <i class="fa-solid fa-arrow-right"></i></button>
-        <button class="btn btn-ghost" onclick="loadView('pustaka')">Jelajahi Pustaka</button>
+        <button class="btn btn-cyan" onclick="loadView('terbaru')">Mulai Membaca <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn btn-ghost" onclick="loadView('pustaka')">Pustaka Saya</button>
       </div>
     </div>
     <aside class="hero-side">
       <div class="hero-stats">
-        <div class="stat"><div class="num" id="statTotal">—</div><div class="lbl">Judul Aktif</div></div>
-        <div class="stat"><div class="num">24/7</div><div class="lbl">Update Rilis</div></div>
-        <div class="stat"><div class="num">HD</div><div class="lbl">Kualitas Gambar</div></div>
+        <div class="stat"><div class="num">3D</div><div class="lbl">Immersive UI</div></div>
+        <div class="stat"><div class="num">24/7</div><div class="lbl">Live Sync API</div></div>
+        <div class="stat"><div class="num">HD</div><div class="lbl">Fast Reader</div></div>
       </div>
     </aside>
   </section>
-  ${sectionHead('Rekomendasi','Pilihan')}
+  ${sectionHead('Rekomendasi','Pilihan (Geser)')}
   <div id="homeRekom">${loadingHTML()}</div>
-  ${sectionHead('Baru','Rilis')}
+  ${sectionHead('Update','Terbaru')}
   <div id="homeBaru">${loadingHTML()}</div>`;
 
   try{
-    const [rek,baru] = await Promise.all([
+    const [rek, baru] = await Promise.all([
       fetchJSON(ENDPOINTS.rekomendasi).then(normalizeList),
       fetchJSON(ENDPOINTS.terbaru).then(normalizeList),
     ]);
-    document.getElementById('homeRekom').innerHTML = gridHTML(rek.slice(0,12));
+    
+    document.getElementById('homeRekom').innerHTML = `<div class="horizontal-scroll">${rek.slice(0,10).map(it => cardHTML(it)).join('')}</div>`;
     document.getElementById('homeBaru').innerHTML = gridHTML(baru.slice(0,12));
-    const el = document.getElementById('statTotal');
-    if(el) el.textContent = (rek.length+baru.length)+'+';
   }catch(e){
     document.getElementById('homeRekom').innerHTML = errorHTML();
     document.getElementById('homeBaru').innerHTML = '';
   }
 }
 
-async function viewList(key,t1,t2,url,rank=false){
-  app.innerHTML = sectionHead(t1,t2)+`<div id="list">${loadingHTML()}</div>`;
+async function viewList(t1, t2, url){
+  app.innerHTML = sectionHead(t1, t2)+`<div id="list">${loadingHTML()}</div>`;
   try{
     const items = normalizeList(await fetchJSON(url));
-    app.innerHTML = sectionHead(t1,t2,items.length)+gridHTML(items,rank);
-  }catch(e){ app.innerHTML = sectionHead(t1,t2)+errorHTML(); }
+    app.innerHTML = sectionHead(t1, t2, items.length) + gridHTML(items);
+  }catch(e){ app.innerHTML = sectionHead(t1, t2) + errorHTML(); }
+}
+
+async function viewPopuler(type){
+  app.innerHTML = sectionHead('Komik', 'Populer')+`<div id="popList">${loadingHTML()}</div>`;
+  try{
+    let endpoint = ENDPOINTS.populer;
+    if(type !== 'all') endpoint += `/${type}`;
+    const res = await fetchJSON(endpoint);
+    
+    let items = [];
+    if(type === 'all' && !Array.isArray(res)){
+      if(res.manga?.items) items.push(...res.manga.items);
+      if(res.manhwa?.items) items.push(...res.manhwa.items);
+      if(res.manhua?.items) items.push(...res.manhua.items);
+    } else {
+      items = normalizeList(res.items || res);
+    }
+
+    const filterUI = `
+        <div style="display:flex;gap:8px;margin-bottom:1.5rem;overflow-x:auto;padding-bottom:4px;">
+            <button class="btn ${type==='all'?'btn-cyan':'btn-ghost'}" onclick="loadView('populer','all')">Semua</button>
+            <button class="btn ${type==='manga'?'btn-cyan':'btn-ghost'}" onclick="loadView('populer','manga')">Manga</button>
+            <button class="btn ${type==='manhwa'?'btn-cyan':'btn-ghost'}" onclick="loadView('populer','manhwa')">Manhwa</button>
+            <button class="btn ${type==='manhua'?'btn-cyan':'btn-ghost'}" onclick="loadView('populer','manhua')">Manhua</button>
+        </div>
+    `;
+
+    app.innerHTML = sectionHead('Komik', 'Populer', items.length) + filterUI + gridHTML(items);
+  }catch(e){ app.innerHTML = sectionHead('Komik', 'Populer') + errorHTML(); }
 }
 
 async function viewGenre(){
-  app.innerHTML = sectionHead('Jelajahi','Genre')+`<div id="glist">${loadingHTML()}</div>`;
+  app.innerHTML = sectionHead('Jelajahi', 'Genre')+`<div id="glist">${loadingHTML()}</div>`;
   try{
     const raw = await fetchJSON(ENDPOINTS.genre);
     const genres = normalizeList(raw);
     if(!genres.length) throw 0;
+    
     document.getElementById('glist').outerHTML = `<div class="genre-grid">${genres.map(g=>{
-      const name = g.name||g.title||g.genre||'';
-      const slug = g.slug||name;
-      const count = g.count||g.total||'';
+      const name = g.name || g.title || g.genre || '';
+      const slug = g.slug || extractSlug(g.apiGenreLink) || name;
       return `<div class="genre-tile" onclick="loadView('genre','${esc(slug)}')">
         <div class="gname">${esc(name)}</div>
-        ${count?`<div class="gcount">${esc(count)} komik</div>`:''}
         <i class="fa-solid fa-arrow-right"></i>
       </div>`;
     }).join('')}</div>`;
@@ -417,109 +593,154 @@ async function viewGenre(){
   }
 }
 
-async function viewGenreKomik(slug){
-  app.innerHTML = sectionHead('Genre',slug)+`<div id="gkomik">${loadingHTML()}</div>`;
+async function viewGenreDetail(slug){
+  app.innerHTML = sectionHead('Genre', slug)+`<div id="gkomik">${loadingHTML()}</div>`;
   try{
-    const items = normalizeList(await fetchJSON(`${ENDPOINTS.genre}/${encodeURIComponent(slug)}`));
-    app.innerHTML = sectionHead('Genre',slug,items.length)+gridHTML(items);
-  }catch(e){ app.innerHTML = sectionHead('Genre',slug)+errorHTML(); }
+    const res = await fetchJSON(ENDPOINTS.genreDetail(slug));
+    const items = normalizeList(res.data || res);
+    app.innerHTML = sectionHead('Genre', slug, items.length) + gridHTML(items);
+  }catch(e){ app.innerHTML = sectionHead('Genre', slug) + errorHTML(); }
+}
+
+function viewPustaka(){
+  const list = getBookmarkList();
+  app.innerHTML = sectionHead('Pustaka', 'Tersimpan', list.length) + (
+    list.length ? gridHTML(list) : emptyHTML('fa-regular fa-bookmark', 'Pustaka kamu masih kosong. Buka detail komik lalu klik tombol <b>Simpan Pustaka</b>!')
+  );
 }
 
 function viewRiwayat(){
   const h = getHistory();
-  app.innerHTML = sectionHead('Riwayat','Baca',h.length)+(
+  app.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+        ${sectionHead('Riwayat', 'Baca', h.length)}
+        ${h.length ? `<button class="btn btn-danger" style="padding:6px 12px;font-size:11px;" onclick="clearHistory()"><i class="fa-solid fa-trash"></i> Bersihkan</button>` : ''}
+    </div>
+  ` + (
     h.length
       ? `<div class="list">${h.map(it=>`
-        <div class="row" onclick="openDetail('${esc(it.slug)}')">
-          <img src="${esc(it.cover)}" alt="${esc(it.title)}" loading="lazy" onerror="this.style.opacity=.15">
-          <div><div class="rtitle">${esc(it.title)}</div><div class="rsub">${it.chapter?`Terakhir: Ch. ${esc(it.chapter)}`:'Lanjutkan membaca'}</div></div>
-          <i class="fa-solid fa-arrow-right go"></i>
+        <div class="row" onclick="loadView('detail','${esc(it.slug)}')">
+          <img src="${esc(it.thumb)}" alt="${esc(it.title)}" loading="lazy" onerror="this.style.opacity=.15">
+          <div>
+            <div class="rtitle">${esc(it.title)}</div>
+            <div class="rsub"><i class="fa-solid fa-bookmark" style="color:var(--accent-cyan)"></i> ${esc(it.chapterTitle)} &bull; <span style="color:var(--muted)">${it.time}</span></div>
+          </div>
+          <button class="btn btn-cyan" style="padding:6px 12px;font-size:11px;" onclick="event.stopPropagation(); loadView('read','${esc(it.slug)}|${esc(it.chapterSlug)}')"><i class="fa-solid fa-play"></i> Lanjut</button>
         </div>`).join('')}</div>`
-      : emptyHTML('fa-solid fa-clock-rotate-left','Riwayat masih kosong. Komik yang kamu buka akan tercatat di sini.')
+      : emptyHTML('fa-solid fa-clock-rotate-left', 'Riwayat membaca masih kosong.')
   );
 }
 
 async function viewSearch(q){
-  app.innerHTML = sectionHead('Hasil untuk',`"${q}"`)+`<div id="sres">${loadingHTML('Mencari')}</div>`;
+  app.innerHTML = sectionHead('Hasil Pencarian', `"${q}"`)+`<div id="sres">${loadingHTML('Mencari')}</div>`;
   try{
-    const items = normalizeList(await fetchJSON(ENDPOINTS.search(q)));
-    app.innerHTML = sectionHead('Hasil untuk',`"${q}"`,items.length)+gridHTML(items);
-  }catch(e){ app.innerHTML = sectionHead('Hasil untuk',`"${q}"`)+errorHTML(); }
+    const res = await fetchJSON(ENDPOINTS.search(q));
+    const items = normalizeList(res.data || res);
+    app.innerHTML = sectionHead('Hasil Pencarian', `"${q}"`, items.length) + gridHTML(items);
+  }catch(e){ app.innerHTML = sectionHead('Hasil Pencarian', `"${q}"`) + errorHTML(); }
 }
 
 function doSearchMobile(){
   const q = document.getElementById('searchInputMobile').value.trim();
-  if(q) loadView('search',q);
+  if(q) loadView('search', q);
 }
 
 function doSearch(){
   const q = document.getElementById('searchInput').value.trim();
-  if(q) loadView('search',q);
+  if(q) loadView('search', q);
 }
 
-function openDetail(slug){ if(slug) loadView('detail',slug); }
-
 async function viewDetail(slug){
-  app.innerHTML = loadingHTML('Membuka detail');
+  app.innerHTML = loadingHTML('Membuka detail komik');
   try{
-    const d = await fetchJSON(ENDPOINTS.detail(slug));
-    const data = d.data||d.result||d;
-    const chapters = normalizeList(data.chapters||data.chapter_list||[]);
-    addHistory({slug,title:getTitle(data),cover:getCover(data),chapter:chapters[0]?(chapters[0].chapter||chapters[0].title||''):'',type:getType(data)});
+    const res = await fetchJSON(ENDPOINTS.detail(slug));
+    const data = res.data || res.result || res;
+    
+    currentComicTitle = getTitle(data);
+    currentComicThumb = getCover(data);
+    currentComicData = {
+        slug: slug,
+        title: currentComicTitle,
+        thumb: currentComicThumb,
+        type: getType(data) || 'manga'
+    };
 
-    const genres = (data.genres||data.genre||[]);
+    const chapters = normalizeList(data.chapters || data.chapter_list || []);
+    cachedChapters = chapters.map(ch => extractSlug(ch.apiLink || ch.url || ch.href || ch.slug));
+    const saved = isBookmarked(slug);
+    const genres = data.genres || data.genre || [];
+
     app.innerHTML = `
-    <button class="back-link" onclick="history.length>1?loadView('home'):loadView('home')"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+    <button class="back-link" onclick="loadView('home')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</button>
     <div class="detail">
-      <div class="detail-cover"><img src="${esc(getCover(data))}" alt="${esc(getTitle(data))}" onerror="this.style.opacity=.15"></div>
+      <div class="detail-cover"><img src="${esc(currentComicThumb)}" alt="${esc(currentComicTitle)}" onerror="this.style.opacity=.15"></div>
       <div>
-        <h1>${esc(getTitle(data))}</h1>
+        <h1>${esc(currentComicTitle)}</h1>
+        
+        <button id="bookmarkBtn" class="btn-bookmark ${saved ? 'saved' : ''}" onclick="toggleBookmark(currentComicData)">
+            <i class="${saved ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'}"></i> ${saved ? 'Tersimpan di Pustaka' : 'Simpan Pustaka'}
+        </button>
+
         <div class="badges">
           ${getType(data)?`<span class="badge gold">${esc(getType(data))}</span>`:''}
           ${data.status?`<span class="badge">${esc(data.status)}</span>`:''}
-          ${(Array.isArray(genres)?genres:[]).slice(0,6).map(g=>`<span class="badge">${esc(g.name||g)}</span>`).join('')}
+          ${(Array.isArray(genres)?genres:[]).map(g=>`<span class="badge">${esc(g.name||g)}</span>`).join('')}
         </div>
-        <p class="desc">${esc(data.synopsis||data.description||data.sinopsis||'Belum ada sinopsis untuk judul ini.')}</p>
-        <div class="hero-cta">
-          ${chapters.length?`<button class="btn btn-gold" onclick="loadView('read','${esc(getSlug(chapters[chapters.length-1])||chapters[chapters.length-1].slug||'')}')"><i class="fa-solid fa-book-open"></i> Mulai Ch. 1</button>`:''}
-        </div>
+        
+        <p class="desc">${esc(data.sinopsis || data.description || 'Sinopsis belum tersedia untuk komik ini.')}</p>
+        
         <div class="chapters">
-          <h3>Daftar Chapter <span style="color:var(--muted);font-size:14px;font-family:var(--sans)">(${chapters.length})</span></h3>
-          ${chapters.length?chapters.map(c=>{
-            const cslug = c.slug||getSlug(c);
-            const label = c.title||c.chapter||c.num||cslug;
-            return `<div class="ch-item" onclick="loadView('read','${esc(cslug)}')">
-              <span>Chapter ${esc(label)}</span>
-              <span class="num">${esc(c.date||c.released||'')} <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span>
-            </div>`;
-          }).join(''):emptyHTML('fa-regular fa-file-lines','Belum ada chapter tersedia.')}
+          <h3><i class="fa-solid fa-list-ul" style="color:var(--accent-cyan)"></i> Daftar Chapter (${chapters.length})</h3>
+          <div class="chapter-grid">
+            ${chapters.length ? chapters.map(c => {
+                const chSlug = extractSlug(c.apiLink || c.url || c.href || c.slug);
+                const chName = c.title || c.name || c.chapter || 'Chapter';
+                return `<button class="ch-item" onclick="loadView('read','${esc(slug)}|${esc(chSlug)}')">${esc(chName)}</button>`;
+            }).join('') : emptyHTML('fa-regular fa-file-lines','Chapter tidak ditemukan.')}
+          </div>
         </div>
       </div>
     </div>`;
   }catch(e){ app.innerHTML = errorHTML(); }
 }
 
-async function viewReader(slug){
-  app.innerHTML = loadingHTML('Membuka chapter');
+async function viewReader(param){
+  const [slug, chapter] = param.split('|');
+  app.innerHTML = loadingHTML('Memuat halaman baca');
   try{
-    const d = await fetchJSON(ENDPOINTS.chapter(slug));
-    const data = d.data||d.result||d;
-    const images = data.images||data.image||data.pages||[];
-    const title = data.title||data.komik_title||'Chapter';
+    const res = await fetchJSON(ENDPOINTS.chapter(slug, chapter));
+    const data = res.data || res.result || res;
+    const images = data.images || data.image || data.pages || [];
+    const chapName = data.title || `Chapter ${chapter}`;
+
+    // Simpan ke riwayat baca secara otomatis
+    addHistory(slug, currentComicTitle || 'Komik', currentComicThumb, chapter, chapName);
+
+    const currentIndex = cachedChapters.indexOf(chapter);
+    let prevChapter = currentIndex < cachedChapters.length - 1 ? cachedChapters[currentIndex + 1] : null;
+    let nextChapter = currentIndex > 0 ? cachedChapters[currentIndex - 1] : null;
+
+    const navButtons = () => `
+        <button class="btn btn-ghost" ${!prevChapter ? 'disabled' : ''} onclick="${prevChapter ? `loadView('read','${slug}|${prevChapter}')` : ''}"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+        <button class="btn btn-ghost" onclick="loadView('detail','${slug}')"><i class="fa-solid fa-list"></i> Chapter</button>
+        <button class="btn btn-cyan" ${!nextChapter ? 'disabled' : ''} onclick="${nextChapter ? `loadView('read','${slug}|${nextChapter}')` : ''}">Next <i class="fa-solid fa-chevron-right"></i></button>
+    `;
+
     app.innerHTML = `
     <div class="reader">
       <div class="reader-head">
-        <button class="back-link" onclick="loadView('pustaka')"><i class="fa-solid fa-arrow-left"></i> Pustaka</button>
-        <h2>${esc(title)}</h2>
-        <p>${esc(data.chapter||data.chapter_title||slug)}</p>
+        <button class="back-link" onclick="loadView('detail','${slug}')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Detail</button>
+        <h2>${esc(chapName)}</h2>
+        <p>KOMIK KITA — 3D IMMERSIVE READER</p>
       </div>
-      ${Array.isArray(images)&&images.length
-        ? images.map(src=>`<img src="${esc(src.url||src)}" alt="Halaman" loading="lazy" onerror="this.style.display='none'">`).join('')
-        : emptyHTML('fa-regular fa-image','Gambar chapter tidak tersedia.')}
-      <div class="reader-nav">
-        <button class="btn btn-ghost" onclick="loadView('pustaka')"><i class="fa-solid fa-list"></i> Semua Komik</button>
-        <button class="btn btn-gold" onclick="window.scrollTo({top:0,behavior:'smooth'})">Ke Atas <i class="fa-solid fa-arrow-up"></i></button>
+      
+      <div class="reader-nav">${navButtons()}</div>
+
+      <div style="display:flex;flex-direction:column;border-radius:12px;overflow:hidden;box-shadow:0 15px 35px rgba(0,0,0,0.8)">
+        ${Array.isArray(images) && images.length ? images.map(img => `<img src="${esc(img.url || img)}" loading="lazy" alt="Manga Page" onerror="this.style.display='none'">`).join('') : emptyHTML('fa-regular fa-image','Gambar tidak dapat dimuat.')}
       </div>
+
+      <div class="reader-nav" style="margin-top:20px;">${navButtons()}</div>
     </div>`;
   }catch(e){ app.innerHTML = errorHTML(); }
 }
