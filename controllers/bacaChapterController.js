@@ -80,12 +80,17 @@ const getBacaChapter = async (req, res) => {
     const images = [];
     $("#Baca_Komik img, img.ww, img[id]").each((_, el) => {
       const img = $(el);
-      const src = getImageUrl($, img);
+      
+      // Tangkap src standar atau atribut lazy load (data-src / data-original) agar gambar awal tidak terlewat
+      const rawSrc = img.attr("data-src") || img.attr("data-original") || img.attr("src");
+      const tempImg = { attr: (name) => name === 'src' ? rawSrc : img.attr(name) };
+      const src = getImageUrl($, tempImg);
       const id = normalizeText(img.attr("id"));
 
       if (
         src &&
-        /(?:img|cdn|komiku)\.komiku\.org\/upload/i.test(src) &&
+        // Diperluas dengan (?:\/upload|\/uploads) agar mencakup seluruh folder penyimpanan server
+        /(?:img|cdn|komiku)\.komiku\.org\/(?:upload|uploads)/i.test(src) &&
         (!id || /^\d+$/.test(id))
       ) {
         images.push({
