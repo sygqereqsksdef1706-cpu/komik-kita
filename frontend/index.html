@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                    <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -157,7 +157,7 @@
             background: var(--bg-card-hover);
         }
         .card-thumb-wrapper { position: relative; padding-top: 140%; background: #0f1523; overflow: hidden; }
-        .card-thumb-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .card-thumb-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.5s ease; }
         .comic-card:hover .card-thumb-wrapper img { transform: scale(1.08); }
         
         .card-badge { 
@@ -208,7 +208,7 @@
         }
         .detail-header { display: flex; flex-direction: column; gap: 2rem; }
         @media (min-width: 768px) { .detail-header { flex-direction: row; } }
-        .detail-cover { width: 220px; border-radius: 12px; object-fit: cover; align-self: center; border: 2px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+        .detail-cover { width: 220px; border-radius: 12px; object-fit: cover; object-position: center top; align-self: center; border: 2px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
         .detail-meta { flex: 1; }
         
         .genre-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
@@ -387,6 +387,12 @@
             }
         };
 
+        // --- FUNGSI AUTO CLEAR RESIZE THUMBNAIL ---
+        function cleanThumb(url) {
+            if (!url) return 'https://via.placeholder.com/200x280?text=No+Cover';
+            return url.split('?')[0];
+        }
+
         // --- SISTEM PUSTAKA / BOOKMARK (LOCALSTORAGE) ---
         function getBookmarkList() {
             return JSON.parse(localStorage.getItem('komik_pustaka')) || [];
@@ -412,7 +418,7 @@
                 list.push({
                     slug: komik.slug,
                     title: komik.title,
-                    thumb: komik.thumb,
+                    thumb: cleanThumb(komik.thumb),
                     type: komik.type || 'manga'
                 });
                 if(btn) {
@@ -429,7 +435,7 @@
             let history = JSON.parse(localStorage.getItem('komik_history')) || [];
             history = history.filter(item => item.slug !== slug);
             history.unshift({
-                slug, title, thumb, chapterSlug, chapterTitle,
+                slug, title, thumb: cleanThumb(thumb), chapterSlug, chapterTitle,
                 time: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
             });
             if (history.length > 20) history.pop();
@@ -507,7 +513,7 @@
                 else if (view === 'detail') {
                     const res = await fetch(`/detail-komik/${param}`).then(r=>r.json());
                     currentComicTitle = res.title || 'Komik';
-                    currentComicThumb = res.thumbnail || '';
+                    currentComicThumb = cleanThumb(res.thumbnail || '');
                     currentComicData = {
                         slug: param,
                         title: currentComicTitle,
@@ -539,7 +545,7 @@
             return {
                 title: item.title || 'Untitled',
                 slug: item.mangaSlug || item.slug || extractSlug(item.apiDetailLink || item.href || item.detailUrl || ''),
-                thumb: item.thumbnail || item.thumb || 'https://via.placeholder.com/200x280?text=No+Cover',
+                thumb: cleanThumb(item.thumbnail || item.thumb),
                 type: (item.type || '').toLowerCase(),
                 chapter: item.latestChapterTitle || item.latestChapter || ''
             };
@@ -631,7 +637,7 @@
                 history.forEach(item => {
                     html += `
                         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1rem; display:flex; align-items:center; gap:1.2rem; box-shadow:var(--shadow-3d);">
-                            <img src="${item.thumb}" style="width:65px; height:90px; object-fit:cover; border-radius:8px; flex-shrink:0;">
+                            <img src="${item.thumb}" style="width:65px; height:90px; object-fit:cover; object-position: center top; border-radius:8px; flex-shrink:0;">
                             <div style="flex-grow:1; display:flex; flex-direction:column; gap:0.3rem;">
                                 <h3 style="font-size:1.05rem; font-weight:700; cursor:pointer;" onclick="loadView('detail', '${item.slug}')">${item.title}</h3>
                                 <span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:600;"><i class="fa-solid fa-bookmark"></i> ${item.chapterTitle}</span>
@@ -650,11 +656,12 @@
             const genres = data.genres || [];
             const chapters = data.chapters || [];
             const saved = isBookmarked(slug);
+            const thumbClean = cleanThumb(data.thumbnail);
 
             app.innerHTML = `
                 <div class="detail-container">
                     <div class="detail-header">
-                        ${data.thumbnail ? `<img class="detail-cover" src="${data.thumbnail}">` : ''}
+                        ${thumbClean ? `<img class="detail-cover" src="${thumbClean}">` : ''}
                         <div class="detail-meta">
                             <h2 style="margin-bottom:0.5rem; color:var(--text-main); font-size:1.6rem; font-weight:800;">${data.title}</h2>
                             
