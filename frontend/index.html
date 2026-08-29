@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOMIK KITA — Elite 3D Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #060913;
+            --bg-card: rgba(18, 24, 38, 0.85);
+            --bg-card-hover: rgba(26, 35, 53, 0.95);
+            --accent-cyan: #00f0ff;
+            --accent-purple: #7000ff;
+            --accent-glow: rgba(0, 240, 255, 0.3);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(0, 240, 255, 0.4);
+            --shadow-3d: 0 12px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            --shadow-3d-hover: 0 20px 40px -10px rgba(0, 240, 255, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            scroll-behavior: smooth;
+            background-image: radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 40%);
+        }
+        
+        /* Navbar 3D Glass */
+        header { 
+            background: rgba(6, 9, 19, 0.8); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            border-bottom: 1px solid var(--border); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .navbar { max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .logo { 
+            font-size: 1.4rem; 
+            font-weight: 900; 
+            color: var(--text-main); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.6rem; 
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 240, 255, 0.3);
+        }
+        .logo span { color: var(--accent-cyan); }
+        
+        /* Developer Signature Badge */
+        .dev-tag {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px dashed rgba(0, 240, 255, 0.25);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        @media (min-width: 1024px) { .dev-tag { display: inline-block; } }
+
+        .search-box { position: relative; flex-grow: 1; max-width: 350px; min-width: 200px; }
+        .search-box input { 
+            width: 100%; 
+            padding: 0.6rem 1rem 0.6rem 2.6rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            background: rgba(18, 24, 38, 0.6); 
+            color: var(--text-main); 
+            outline: none; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .search-box input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-glow), inset 0 2px 4px rgba(0,0,0,0.3); }
+        .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        
+        .nav-menu { display: flex; gap: 0.4rem; list-style: none; overflow-x: auto; padding-bottom: 2px; }
+        .nav-btn { 
+            background: transparent; 
+            border: none; 
+            color: var(--text-muted); 
+            padding: 0.5rem 0.9rem; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            white-space: nowrap; 
+        }
+        .nav-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+        .nav-btn.active { color: var(--accent-cyan); background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.2); }
+
+        /* Main Container */
+        main { max-width: 1300px; margin: 1.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+        
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1.2rem; 
+            border-left: 4px solid var(--accent-cyan); 
+            padding-left: 0.8rem; 
+            margin-top: 2.2rem; 
+        }
+        .section-title { font-size: 1.25rem; font-weight: 800; letter-spacing: 0.5px; }
+
+        /* 3D Horizontal Scroll Container (Trending / Rekomendasi) */
+        .horizontal-scroll {
+            display: flex;
+            gap: 1.2rem;
+            overflow-x: auto;
+            padding: 10px 4px 20px 4px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-cyan) rgba(25, 30, 45, 0.5);
+        }
+        .horizontal-scroll::-webkit-scrollbar { height: 6px; }
+        .horizontal-scroll::-webkit-scrollbar-track { background: rgba(18, 24, 38, 0.5); border-radius: 10px; }
+        .horizontal-scroll::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+        .horizontal-scroll .comic-card { flex: 0 0 170px; scroll-snap-align: start; }
+
+        @media (min-width: 768px) { .horizontal-scroll .comic-card { flex: 0 0 195px; } }
+
+        /* Standard Grid Layout */
+        .comic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.2rem; }
+        @media (min-width: 640px) { .comic-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); } }
+
+        /* 3D Card Effect */
+        .comic-card { 
+            background: var(--bg-card); 
+            border-radius: 14px; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            box-shadow: var(--shadow-3d);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .comic-card:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            border-color: var(--border-hover); 
+            box-shadow: var(--shadow-3d-hover); 
+            background: var(--bg-card-hover);
+        }
+        .card-thumb-wrapper { position: relative; padding-top: 140%; background: #0f1523; overflow: hidden; }
+        .card-thumb-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.5s ease; }
+        .comic-card:hover .card-thumb-wrapper img { transform: scale(1.08); }
+        
+        .card-badge { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+            padding: 3px 8px; 
+            border-radius: 6px; 
+            font-size: 0.7rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            color: white; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+        .badge-manga { background: linear-gradient(135deg, #ef4444, #991b1b); } 
+        .badge-manhwa { background: linear-gradient(135deg, #3b82f6, #1d4ed8); } 
+        .badge-manhua { background: linear-gradient(135deg, #10b981, #047857); }
+
+        .card-info { padding: 0.9rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .card-title { font-size: 0.95rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.4rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-chapter { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+        /* Filter Tabs */
+        .filter-tabs { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 4px; }
+        .filter-btn { 
+            background: var(--bg-card); 
+            color: var(--text-muted); 
+            border: 1px solid var(--border); 
+            padding: 0.5rem 1.2rem; 
+            border-radius: 999px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: 0.2s; 
+            white-space: nowrap; 
+            box-shadow: var(--shadow-3d);
+        }
+        .filter-btn:hover, .filter-btn.active { background: var(--accent-cyan); color: #060913; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* Detail View 3D Panel */
+        .detail-container { 
+            background: var(--bg-card); 
+            border-radius: 18px; 
+            border: 1px solid var(--border); 
+            padding: 2rem; 
+            box-shadow: var(--shadow-3d);
+            backdrop-filter: blur(12px);
+        }
+        .detail-header { display: flex; flex-direction: column; gap: 2rem; }
+        @media (min-width: 768px) { .detail-header { flex-direction: row; } }
+        .detail-cover { width: 220px; border-radius: 12px; object-fit: cover; object-position: center top; align-self: center; border: 2px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+        .detail-meta { flex: 1; }
+        
+        .genre-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
+        .genre-tag { 
+            background: rgba(255, 255, 255, 0.04); 
+            border: 1px solid var(--border); 
+            padding: 0.35rem 0.9rem; 
+            border-radius: 8px; 
+            font-size: 0.8rem; 
+            cursor: default; 
+            transition: 0.2s; 
+        }
+        .genre-tag:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.08); }
+        
+        .synopsis { color: var(--text-muted); line-height: 1.7; font-size: 0.95rem; margin-top: 1rem; }
+
+        /* Chapter List Grid */
+        .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; max-height: 420px; overflow-y: auto; margin-top: 1rem; padding-right: 0.5rem; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(25, 30, 45, 0.5); }
+        .chapter-btn { 
+            background: rgba(25, 33, 50, 0.6); 
+            border: 1px solid var(--border); 
+            color: var(--text-main); 
+            padding: 0.7rem; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            font-size: 0.85rem; 
+            font-weight: 500;
+        }
+        .chapter-btn:hover { background: var(--accent-cyan); color: #060913; border-color: var(--accent-cyan); box-shadow: 0 0 12px var(--accent-glow); }
+
+        /* Reader View - Anti-Potong & Menyatu Sempurna */
+        .reader-container { max-width: 800px; margin: 0 auto; }
+        .reader-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--bg-card); 
+            padding: 1rem; 
+            border-radius: 12px; 
+            margin-bottom: 1.2rem; 
+            border: 1px solid var(--border); 
+            gap: 0.5rem; 
+            flex-wrap: wrap; 
+            box-shadow: var(--shadow-3d);
+        }
+        .reader-images { 
+            display: flex; 
+            flex-direction: column; 
+            background: #000; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); 
+        }
+        .reader-images img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            margin: 0 auto -2px auto; 
+            padding: 0; 
+            vertical-align: bottom;
+            transform: scale(1.002); 
+        }
+
+        /* 3D Action Buttons */
+        .btn { 
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5); 
+            color: white; 
+            border: none; 
+            padding: 0.65rem 1.3rem; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            transition: all 0.2s; 
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(112, 0, 255, 0.4);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(112, 0, 255, 0.6); }
+        
+        .btn-secondary { 
+            background: rgba(25, 33, 50, 0.8); 
+            border: 1px solid var(--border); 
+            color: var(--text-main); 
+            box-shadow: var(--shadow-3d);
+        }
+        .btn-secondary:hover { background: rgba(35, 45, 68, 0.9); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+        
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-danger:hover { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6); }
+        
+        .btn-bookmark {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--accent-cyan);
+        }
+        .btn-bookmark.saved {
+            background: var(--accent-cyan);
+            color: #060913;
+        }
+
+        .btn:disabled, .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        /* Pagination & Misc */
+        .pagination { display: flex; justify-content: center; gap: 1rem; margin-top: 2.5rem; align-items: center; }
+        .spinner { display: flex; justify-content: center; padding: 5rem; color: var(--accent-cyan); font-size: 2.2rem; }
+        
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--accent-cyan);
+            color: #060913;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
+            z-index: 99;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        #scrollTopBtn:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 240, 255, 0.8); }
+
+        footer { 
+            background: rgba(6, 9, 19, 0.9); 
+            border-top: 1px solid var(--border); 
+            text-align: center; 
+            padding: 1.8rem; 
+            color: var(--text-muted); 
+            margin-top: auto; 
+            font-size: 0.85rem; 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo" onclick="loadView('home')">
+                <i class="fa-solid fa-cube" style="color: var(--accent-cyan);"></i> KOMIK<span>KITA</span>
+                <span class="dev-tag">v2.6 // PROD</span>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Cari komik (Tekan Enter)..." onkeydown="if(event.key === 'Enter') loadView('search', this.value.trim())">
+            </div>
+            <ul class="nav-menu">
+                <li><button class="nav-btn active" onclick="loadView('home')">Beranda</button></li>
+                <li><button class="nav-btn" onclick="loadView('populer')">Populer</button></li>
+                <li><button class="nav-btn" onclick="loadView('pustaka')">Pustaka</button></li>
+                <li><button class="nav-btn" onclick="loadView('history')"><i class="fa-solid fa-clock-rotate-left"></i> History</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="app"></main>
+    
+    <button id="scrollTopBtn" onclick="scrollToTop()"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <footer>
+        <p>&copy; 2026 KOMIK KITA. Full-Stack 3D Architecture. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const app = document.getElementById('app');
+        let currentPage = 1;
+        let currentSlug = ''; 
+        let cachedChapters = [];
+        let currentComicTitle = '';
+        let currentComicThumb = '';
+        let currentComicData = null;
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onscroll = function() {
+            const topBtn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                topBtn.style.display = 'flex';
+            } else {
+                topBtn.style.display = 'none';
+            }
+        };
+
+        // --- AUTO CLEAR SEMUA PARAMETER RESIZE THUMBNAIL ---
+        function cleanThumb(url) {
+            if (!url) return 'https://via.placeholder.com/200x280?text=No+Cover';
+            return url.split('?')[0];
+        }
+
+        // --- SISTEM PUSTAKA / BOOKMARK (LOCALSTORAGE) ---
+        function getBookmarkList() {
+            return JSON.parse(localStorage.getItem('komik_pustaka')) || [];
+        }
+
+        function isBookmarked(slug) {
+            const list = getBookmarkList();
+            return list.some(item => item.slug === slug);
+        }
+
+        function toggleBookmark(komik) {
+            let list = getBookmarkList();
+            const index = list.findIndex(item => item.slug === komik.slug);
+            
+            const btn = document.getElementById('bookmarkBtn');
+            if (index > -1) {
+                list.splice(index, 1);
+                if(btn) {
+                    btn.classList.remove('saved');
+                    btn.innerHTML = `<i class="fa-regular fa-bookmark"></i> Simpan Pustaka`;
+                }
+            } else {
+                list.push({
+                    slug: komik.slug,
+                    title: komik.title,
+                    thumb: cleanThumb(komik.thumb),
+                    type: komik.type || 'manga'
+                });
+                if(btn) {
+                    btn.classList.add('saved');
+                    btn.innerHTML = `<i class="fa-solid fa-bookmark"></i> Tersimpan di Pustaka`;
+                }
+            }
+            localStorage.setItem('komik_pustaka', JSON.stringify(list));
+        }
+
+        // --- SISTEM RIWAYAT BACA (LOCALSTORAGE) ---
+        function saveHistory(slug, title, thumb, chapterSlug, chapterTitle) {
+            let history = JSON.parse(localStorage.getItem('komik_history')) || [];
+            history = history.filter(item => item.slug !== slug);
+            history.unshift({
+                slug, title, thumb: cleanThumb(thumb), chapterSlug, chapterTitle,
+                time: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+            });
+            if (history.length > 20) history.pop();
+            localStorage.setItem('komik_history', JSON.stringify(history));
+        }
+
+        function getHistory() {
+            return JSON.parse(localStorage.getItem('komik_history')) || [];
+        }
+
+        function clearHistory() {
+            if (confirm('Yakin ingin membersihkan seluruh riwayat baca?')) {
+                localStorage.removeItem('komik_history');
+                loadView('history');
+            }
+        }
+
+        async function loadView(view, param = '') {
+            updateNavActive(view);
+            app.innerHTML = `<div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>`;
+
+            try {
+                if (view === 'home') {
+                    const [rekRes, newRes] = await Promise.all([ fetch('/rekomendasi').then(r=>r.json()), fetch('/terbaru').then(r=>r.json()) ]);
+                    renderHome(rekRes, newRes);
+                } 
+                else if (view === 'populer') {
+                    const type = param || 'all'; 
+                    const endpoint = type === 'all' ? '/komik-populer' : `/komik-populer/${type}`;
+                    const res = await fetch(endpoint).then(r=>r.json());
+                    
+                    let items = [];
+                    if (type === 'all') {
+                        if (res.manga?.items) items.push(...res.manga.items);
+                        if (res.manhwa?.items) items.push(...res.manhwa.items);
+                        if (res.manhua?.items) items.push(...res.manhua.items);
+                    } else {
+                        items = res.items || [];
+                    }
+
+                    const filterUI = `
+                        <div class="filter-tabs">
+                            <button class="filter-btn ${type === 'all' ? 'active' : ''}" onclick="loadView('populer', 'all')">Semua Tipe</button>
+                            <button class="filter-btn ${type === 'manga' ? 'active' : ''}" onclick="loadView('populer', 'manga')">Manga</button>
+                            <button class="filter-btn ${type === 'manhwa' ? 'active' : ''}" onclick="loadView('populer', 'manhwa')">Manhwa</button>
+                            <button class="filter-btn ${type === 'manhua' ? 'active' : ''}" onclick="loadView('populer', 'manhua')">Manhua</button>
+                        </div>
+                    `;
+                    renderGrid('🔥 Komik Populer Pilihan', items, false, 'populer', filterUI);
+                } 
+                else if (view === 'pustaka') {
+                    renderPustakaView();
+                } 
+                else if (view === 'search') {
+                    if (typeof param === 'string') {
+                        currentSlug = param;
+                        currentPage = 1;
+                    } else {
+                        currentPage = param;
+                    }
+
+                    const url = currentPage > 1 
+                        ? `/search?q=${encodeURIComponent(currentSlug)}&page=${currentPage}` 
+                        : `/search?q=${encodeURIComponent(currentSlug)}`;
+
+                    const res = await fetch(url).then(r=>r.json());
+                    const items = Array.isArray(res) ? res : (res.data || res.items || []);
+                    
+                    renderGrid(`🔍 Hasil Pencarian: "${currentSlug}"`, items, true, 'search');
+                } 
+                else if (view === 'history') {
+                    renderHistory();
+                }
+                else if (view === 'detail') {
+                    const res = await fetch(`/detail-komik/${param}`).then(r=>r.json());
+                    currentComicTitle = res.title || 'Komik';
+                    currentComicThumb = cleanThumb(res.thumbnail || '');
+                    currentComicData = {
+                        slug: param,
+                        title: currentComicTitle,
+                        thumb: currentComicThumb,
+                        type: res.type || 'manga'
+                    };
+                    cachedChapters = (res.chapters || []).map(ch => extractSlug(ch.apiLink || ch.url || ch.href));
+                    renderDetail(res, param);
+                } 
+                else if (view === 'reader') {
+                    const [slug, chapter] = param.split('|');
+                    const res = await fetch(`/baca-chapter/${slug}/${chapter}`).then(r=>r.json());
+                    const chapName = res.title || `Chapter ${chapter}`;
+                    saveHistory(slug, currentComicTitle || 'Komik', currentComicThumb, chapter, chapName);
+                    renderReader(res, slug, chapter);
+                }
+
+                // Scroll ke atas otomatis SETELAH konten berhasil dirender penuh
+                scrollToTop();
+
+            } catch (err) {
+                app.innerHTML = `<div style="text-align:center; padding:5rem 1rem;"><h3 style="color:#ef4444; font-size:1.5rem; margin-bottom:1rem;">Gagal Memuat Respon</h3><p style="color:var(--text-muted);">${err.message}</p></div>`;
+            }
+        }
+
+        function extractSlug(url) {
+            if (!url) return '';
+            const parts = url.replace(/^\/+|\/+$/g, '').split('/');
+            return parts[parts.length - 1];
+        }
+
+        function normalizeItem(item) {
+            return {
+                title: item.title || 'Untitled',
+                slug: item.mangaSlug || item.slug || extractSlug(item.apiDetailLink || item.href || item.detailUrl || ''),
+                thumb: cleanThumb(item.thumbnail || item.thumb),
+                type: (item.type || '').toLowerCase(),
+                chapter: item.latestChapterTitle || item.latestChapter || ''
+            };
+        }
+
+        function renderHome(rek, terbaru) {
+            const rekItems = rek.slice(0, 8).map(i => createCard(normalizeItem(i))).join('');
+            const newItems = terbaru.map(i => createCard(normalizeItem(i))).join('');
+
+            app.innerHTML = `
+                <div class="section-header"><h2 class="section-title">⭐ Rekomendasi Pilihan (Geser)</h2></div>
+                <div class="horizontal-scroll">${rekItems}</div>
+
+                <div class="section-header"><h2 class="section-title">⚡ Update Komik Terbaru</h2></div>
+                <div class="comic-grid">${newItems}</div>
+            `;
+        }
+
+        function renderGrid(title, items, showPagination = false, viewType = '', customHeader = '') {
+            let html = `<div class="section-header"><h2 class="section-title">${title}</h2></div>`;
+            if (customHeader) html += customHeader;
+            
+            if (items.length === 0) html += `<p style="text-align:center; padding:3rem; color:var(--text-muted);">Data komik tidak ditemukan.</p>`;
+            else html += `<div class="comic-grid">${items.map(i => createCard(normalizeItem(i))).join('')}</div>`;
+            
+            if (showPagination && items.length > 0) {
+                html += `
+                    <div class="pagination">
+                        <button class="btn btn-secondary" ${currentPage <= 1 ? 'disabled' : ''} onclick="loadView('${viewType}', ${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+                        <span style="font-weight:700; color:var(--accent-cyan);">Halaman ${currentPage}</span>
+                        <button class="btn btn-secondary" onclick="loadView('${viewType}', ${currentPage + 1})">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>`;
+            }
+            app.innerHTML = html;
+        }
+
+        function createCard(item) {
+            let badge = '';
+            if (item.type.includes('manhwa')) badge = 'badge-manhwa';
+            else if (item.type.includes('manhua')) badge = 'badge-manhua';
+            else if (item.type) badge = 'badge-manga';
+
+            return `
+                <div class="comic-card" onclick="loadView('detail', '${item.slug}')">
+                    <div class="card-thumb-wrapper">
+                        <img src="${item.thumb}" loading="lazy">
+                        ${badge ? `<span class="card-badge ${badge}">${item.type.toUpperCase()}</span>` : ''}
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">${item.title}</h3>
+                        ${item.chapter ? `<span class="card-chapter"><i class="fa-solid fa-bolt"></i>${item.chapter}</span>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        function renderPustakaView() {
+            const list = getBookmarkList();
+            let html = `<div class="section-header"><h2 class="section-title">📖 Pustaka Tersimpan (Bookmark)</h2></div>`;
+            
+            if (list.length === 0) {
+                html += `<p style="text-align:center; padding:4rem; color:var(--text-muted);">Pustaka kamu masih kosong. Buka detail komik lalu klik tombol <b>Simpan Pustaka</b>!</p>`;
+            } else {
+                html += `<div class="comic-grid">${list.map(i => createCard(i)).join('')}</div>`;
+            }
+            app.innerHTML = html;
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            let html = `
+                <div class="section-header" style="justify-content: space-between;">
+                    <h2 class="section-title">⏱️ Riwayat Baca Terakhir</h2>
+                    ${history.length > 0 ? `<button class="btn btn-danger" style="padding: 0.4rem 0.9rem; font-size:0.8rem;" onclick="clearHistory()"><i class="fa-solid fa-trash"></i> Bersihkan</button>` : ''}
+                </div>
+            `;
+
+            if (history.length === 0) {
+                html += `<p style="text-align:center; padding:4rem; color:var(--text-muted);">Belum ada riwayat baca komik.</p>`;
+            } else {
+                html += `<div style="display:flex; flex-direction:column; gap:1rem;">`;
+                history.forEach(item => {
+                    html += `
+                        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1rem; display:flex; align-items:center; gap:1.2rem; box-shadow:var(--shadow-3d);">
+                            <img src="${item.thumb}" style="width:65px; height:90px; object-fit:cover; object-position: center top; border-radius:8px; flex-shrink:0;">
+                            <div style="flex-grow:1; display:flex; flex-direction:column; gap:0.3rem;">
+                                <h3 style="font-size:1.05rem; font-weight:700; cursor:pointer;" onclick="loadView('detail', '${item.slug}')">${item.title}</h3>
+                                <span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:600;"><i class="fa-solid fa-bookmark"></i> ${item.chapterTitle}</span>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">Dibaca: ${item.time}</span>
+                            </div>
+                            <button class="btn" onclick="loadView('reader', '${item.slug}|${item.chapterSlug}')"><i class="fa-solid fa-play"></i> Lanjut</button>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            app.innerHTML = html;
+        }
+
+        function renderDetail(data, slug) {
+            const genres = data.genres || [];
+            const chapters = data.chapters || [];
+            const saved = isBookmarked(slug);
+            const thumbClean = cleanThumb(data.thumbnail);
+
+            app.innerHTML = `
+                <div class="detail-container">
+                    <div class="detail-header">
+                        ${thumbClean ? `<img class="detail-cover" src="${thumbClean}">` : ''}
+                        <div class="detail-meta">
+                            <h2 style="margin-bottom:0.5rem; color:var(--text-main); font-size:1.6rem; font-weight:800;">${data.title}</h2>
+                            
+                            <button id="bookmarkBtn" class="btn btn-bookmark ${saved ? 'saved' : ''}" style="margin: 0.5rem 0 1rem 0;" onclick="toggleBookmark(currentComicData)">
+                                <i class="${saved ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'}"></i> ${saved ? 'Tersimpan di Pustaka' : 'Simpan Pustaka'}
+                            </button>
+
+                            <div class="genre-tags">
+                                ${genres.map(g => {
+                                    const title = typeof g === 'string' ? g : (g.title || g.name || '');
+                                    return `<span class="genre-tag">${title}</span>`;
+                                }).join('')}
+                            </div>
+                            <p class="synopsis">${data.sinopsis || data.description || 'Sinopsis belum tersedia.'}</p>
+                        </div>
+                    </div>
+                    <div style="margin-top:2.5rem; border-top:1px solid var(--border); padding-top:1.5rem;">
+                        <h3 style="margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-list-ul"></i> Daftar Chapter (${chapters.length})</h3>
+                        <div class="chapter-grid">
+                            ${chapters.map(ch => {
+                                const chSlug = extractSlug(ch.apiLink || ch.url || ch.href);
+                                return `<button class="chapter-btn" onclick="loadView('reader', '${slug}|${chSlug}')">${ch.title || ch.name || ch.chapter}</button>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderReader(data, slug, currentChapter) {
+            let images = data.images || [];
+            
+            // --- URUTKAN GAMBAR BERDASARKAN ANGKA ID SECARA PRESISI ---
+            images.sort((a, b) => {
+                let idA = parseInt(a.id) || 0;
+                let idB = parseInt(b.id) || 0;
+                return idA - idB;
+            });
+
+            const currentIndex = cachedChapters.indexOf(currentChapter);
+            
+            let prevChapterSlug = currentIndex < cachedChapters.length - 1 ? cachedChapters[currentIndex + 1] : null;
+            let nextChapterSlug = currentIndex > 0 ? cachedChapters[currentIndex - 1] : null;
+
+            const renderNavButtons = () => `
+                <button class="btn btn-secondary" ${!prevChapterSlug ? 'disabled' : ''} onclick="${prevChapterSlug ? `loadView('reader', '${slug}|${prevChapterSlug}')` : ''}">
+                    <i class="fa-solid fa-chevron-left"></i> Prev
+                </button>
+                <button class="btn btn-secondary" onclick="loadView('detail', '${slug}')">
+                    <i class="fa-solid fa-list"></i> Daftar Chapter
+                </button>
+                <button class="btn" ${!nextChapterSlug ? 'disabled' : ''} onclick="${nextChapterSlug ? `loadView('reader', '${slug}|${nextChapterSlug}')` : ''}">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            `;
+
+            app.innerHTML = `
+                <div class="reader-container">
+                    <div class="reader-nav">${renderNavButtons()}</div>
+                    <div class="reader-images">
+                        ${images.map(img => `<img src="${img.src || img.url}" loading="lazy" alt="${img.alt || 'Page'}">`).join('')}
+                    </div>
+                    <div class="reader-nav" style="margin-top:1.5rem;">${renderNavButtons()}</div>
+                </div>`;
+        }
+
+        function updateNavActive(view) {
+            const baseView = view === 'populer' ? 'populer' : view;
+            document.querySelectorAll('.navbar .nav-btn').forEach(btn => btn.classList.remove('active'));
+            const active = Array.from(document.querySelectorAll('.navbar .nav-btn')).find(b => b.getAttribute('onclick')?.includes(`'${baseView}'`));
+            if (active) active.classList.add('active');
+        }
+
+        loadView('home');
+    </script>
+</body>
+</html>
